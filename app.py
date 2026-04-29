@@ -770,53 +770,51 @@ add_particles()
 # ANIMATED DATE AND TIME DISPLAY
 # =============================
 def display_datetime():
-    now = datetime.now()
-    formatted_date = now.strftime("%A, %B %d, %Y")
-    formatted_time = now.strftime("%I:%M:%S %p")
+    import streamlit.components.v1 as components
     
-    datetime_placeholder = st.empty()
-    
-    with datetime_placeholder.container():
-        st.markdown(f"""
-        <div style='text-align: center; margin-bottom: 20px;'>
-            <div class='datetime-container'>
-                <span style='font-size: 1.1rem; margin-right: 10px; color: #1e293b !important;'>📅 {formatted_date}</span>
-                <span style='font-size: 1.1rem; color: #1e293b !important;'>⏰ {formatted_time}</span>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Auto-refresh every second using JavaScript with smooth transitions
-    st.markdown("""
-    <script>
-        function updateTime() {
-            var elements = document.getElementsByClassName('datetime-container');
-            if (elements.length > 0) {
-                var now = new Date();
-                var dateStr = now.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-                var timeStr = now.toLocaleTimeString('en-US', { 
-                    hour12: true,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                elements[0].style.opacity = '0.7';
-                setTimeout(() => {
-                    elements[0].innerHTML = '<span style="font-size: 1.1rem; margin-right: 10px;">📅 ' + dateStr + '</span>' +
-                                           '<span style="font-size: 1.1rem;">⏰ ' + timeStr + '</span>';
-                    elements[0].style.opacity = '1';
-                }, 150);
-            }
-            setTimeout(updateTime, 1000);
+    # Pure client-side clock to ensure local time is always correct
+    components.html("""
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+        .clock-container {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 10px 20px;
+            color: #1e293b;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin: 10px auto;
+            width: 100%;
+            box-sizing: border-box;
         }
-        setTimeout(updateTime, 1000);
+        .time { font-weight: 600; margin-left: 15px; }
+    </style>
+    <div style="text-align: center; width: 100%;">
+        <div class="clock-container" id="clock">
+            Loading time...
+        </div>
+    </div>
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+            document.getElementById('clock').innerHTML = 
+                '<span>📅 ' + dateStr + '</span>' + 
+                '<span class="time">⏰ ' + timeStr + '</span>';
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
     </script>
-    """, unsafe_allow_html=True)
+    """, height=100)
 
 display_datetime()
 
