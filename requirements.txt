@@ -1,0 +1,13 @@
+streamlit
+requests
+python-dotenv
+google-generativeai
+fastapi
+uvicorn
+pandas
+numpy
+httpx
+pydantic
+scipy
+scikit-learn
+joblib
